@@ -24,11 +24,11 @@ function lvlTimer() {
     if (headerTimer.innerHTML < 50) {
         setTimeout(function () {
             lvlTimer();
-        }, 130)
+        }, 70)
     } else if (headerTimer.innerHTML < 100) {
         setTimeout(function () {
             lvlTimer();
-        }, 70)
+        }, 150)
     }
 }
 lvlTimer()
@@ -121,13 +121,13 @@ function plusOrMinus(element) {
 
     const out = parent.querySelector(".main__product-num"); // кол-во товара
 
-    const prise = parent.querySelector(".main__product-price span"); // цена
+    const Lastprice = parent.querySelector(".main__product-price span"); // цена
 
     const kcall = parent.querySelector(".main__product-kcall span") // калории
 
     out.innerHTML = products[parentId].amount;
 
-    prise.innerHTML = products[parentId].Sum;
+    Lastprice.innerHTML = products[parentId].Sum;
 
     kcall.innerHTML = products[parentId].Kcall;
 }
@@ -143,10 +143,128 @@ for (let x = 0; x < checkExtraProducts.length; x++) {
 }
 
 function addExtraProduct(element) {
-    const parent = element.closest(".main__product");
+    const parent = element.closest(".main__product"); // узнаем родителя
 
-    const parentId = parent.getAttribute("id");
+    const parentId = parent.getAttribute("id"); // id секции
 
     const elAtr = element.getAttribute("data-extra");
 
+    const Lastprice = parent.querySelector(".main__product-price span"); // цена
+
+    const kcall = parent.querySelector(".main__product-kcall span") // калории
+
+    products[parentId][elAtr] = element.checked;
+
+    if (products[parentId][elAtr] == true) {
+        products[parentId].price += extraProducts[elAtr].price;
+        products[parentId].kcall += extraProducts[elAtr].kcall;
+    } else {
+        products[parentId].price -= extraProducts[elAtr].price;
+        products[parentId].kcall -= extraProducts[elAtr].kcall;
+    }
+
+    Lastprice.innerHTML = products[parentId].Sum;
+
+    kcall.innerHTML = products[parentId].Kcall;
 }
+
+
+
+// заказать
+
+const addCart = document.querySelector('.addCart');
+
+const reciept = document.querySelector('.receipt'); // modal window
+
+const receiptWindow = document.querySelector('.receipt__window'); // check form
+
+const receiptOut = document.querySelector('.receipt__window-out') // check desc
+
+const receiptBtn = document.querySelector('.receipt__window-btn') // check btn
+
+
+let totalName = "";
+let totalPrice = 0;
+let totalKcall = 0;
+
+const arrProducts = []
+
+
+addCart.addEventListener("click", function () {
+    for (const key in products) {
+        const prObj = products[key];
+
+        if (prObj.amount > 0) {
+            arrProducts.push(prObj); // добавляем выбранный продукт в массив
+            for (const infoKey in prObj) {      // перебор ключей продукта
+                if (prObj[infoKey] === true) {     // доп. ингредиенты
+                    prObj.name += "\n" + extraProducts[infoKey].name;
+                }
+
+                prObj.price = prObj.Sum;
+                prObj.Kcall = prObj.Kcall;
+            }
+        }
+
+        for (let i = 0; i < arrProducts.length; i++) {
+            const el = arrProducts[i];
+
+            totalPrice += el.price;
+            totalKcall += el.kcall;
+            totalName += "\n" + el.name + "\n";
+        }
+    }
+
+    receiptOut.innerHTML = `Вы купили: \n ${totalName} \nКалорийность: ${totalKcall}
+    \nСтоимость покупки: ${totalPrice}`;
+
+    reciept.style.display = "flex";
+
+    reciept.style.opacity = "1";
+
+    receiptWindow.style.top = "0";
+})
+
+
+
+
+
+
+
+
+
+// Даблкик по картинке
+
+const mainProdBlock = document.querySelectorAll('.main__product-info');
+
+const view = document.querySelector('.view');     // окно с картинкой
+
+const viewCloseBtn = document.querySelector('.view__close');        // кнопка закрытия окна
+
+for (let j = 0; j < mainProdBlock.length; j++) {
+    mainProdBlock[j].addEventListener("dblclick", function () {
+        WindView(this);
+    })
+}
+
+function WindView(el) {
+    const parent = el.closest(".main__product"); // узнаем родителя
+
+    const parentId = parent.getAttribute("id"); // id секции
+
+    const htmlImg = document.querySelectorAll('.main__product-img'); // img в секциях
+
+    const windImg = document.querySelector('.view img'); // img в окне
+
+    for (let k = 0; k < htmlImg.length; k++) {
+        windImg.setAttribute("src", htmlImg[k].getAttribute("src"));     // такой вариант возвращал только последнюю картинку
+    }
+
+
+    view.classList.add("active");
+
+}
+
+viewCloseBtn.addEventListener("click", function () {
+    view.classList.remove("active");
+})
