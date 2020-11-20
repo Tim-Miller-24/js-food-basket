@@ -28,7 +28,7 @@ function lvlTimer() {
     } else if (headerTimer.innerHTML < 100) {
         setTimeout(function () {
             lvlTimer();
-        }, 150)
+        }, 135)
     }
 }
 lvlTimer()
@@ -45,7 +45,8 @@ const products = {
         },
         get Kcall() {
             return this.kcall * this.amount;
-        }
+        },
+        img: "images/product2.jpg"
     },
     freshBurger: {
         name: 'Гамбургер FRESH',
@@ -57,7 +58,8 @@ const products = {
         },
         get Kcall() {
             return this.kcall * this.amount;
-        }
+        },
+        img: "images/product1.jpg"
     },
     freshCombo: {
         name: 'FRESH COMBO',
@@ -69,7 +71,8 @@ const products = {
         },
         get Kcall() {
             return this.kcall * this.amount;
-        }
+        },
+        img: "images/product3.jpg"
     },
 }
 
@@ -104,12 +107,12 @@ for (let i = 0; i < btnPlusOrMinus.length; i++) {
 
 // closest() - возвращает родителя
 function plusOrMinus(element) {
-    const parent = element.closest('.main__product');
     // hasAttribute("name") - вернет true, если есть
     // setAttribute("name", "value") - изменить значение атрибута
     // removeAttribute("name") - удаляет атрибут
     // getAttribute("name") - вернет его значение
 
+    const parent = element.closest('.main__product');
     const parentId = parent.getAttribute("id");
     const elemSymbol = element.getAttribute("data-symbol");
 
@@ -252,14 +255,9 @@ function WindView(el) {
 
     const parentId = parent.getAttribute("id"); // id секции
 
-    const htmlImg = document.querySelectorAll('.main__product-img'); // img в секциях
-
     const windImg = document.querySelector('.view img'); // img в окне
 
-    for (let k = 0; k < htmlImg.length; k++) {
-        windImg.setAttribute("src", htmlImg[k].getAttribute("src"));     // такой вариант возвращал только последнюю картинку
-    }
-
+    windImg.setAttribute("src", products[parentId].img);
 
     view.classList.add("active");
 
